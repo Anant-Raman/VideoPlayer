@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootView"
+        android:background="@drawable/selected_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontalGuidelineTop8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/dp_8" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontalGuidelineBottom4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="@dimen/dp_4" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/verticalStartGuideline04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.04" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/verticalEndGuideline96"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.96" />
+
+        <View
+            android:id="@+id/thumbnail"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="@dimen/dp_80"
+            android:background="@drawable/oval_shape"
+            app:layout_constraintBottom_toBottomOf="@id/horizontalGuidelineBottom4"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintStart_toStartOf="@id/verticalStartGuideline04"
+            app:layout_constraintTop_toTopOf="@id/horizontalGuidelineTop8" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCategoryIcon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/dp_4"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="@id/thumbnail"
+            app:layout_constraintStart_toStartOf="@+id/thumbnail"
+            app:layout_constraintTop_toTopOf="@id/thumbnail" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvVideoName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintVertical_chainStyle="packed"
+            style="@style/GelionSemiBold16"
+            app:layout_constraintEnd_toEndOf="@id/verticalEndGuideline96"
+            app:layout_constraintStart_toEndOf="@id/thumbnail"
+            app:layout_constraintTop_toTopOf="@id/horizontalGuidelineTop8"
+            app:layout_constraintBottom_toTopOf="@+id/tvVideoDescription" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvVideoDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:ellipsize="end"
+            android:maxLines="3"
+            style="@style/GelionRegular14"
+            android:layout_marginTop="@dimen/dp_4"
+            app:layout_constraintEnd_toEndOf="@id/verticalEndGuideline96"
+            app:layout_constraintStart_toEndOf="@id/thumbnail"
+            app:layout_constraintTop_toBottomOf="@id/tvVideoName"
+            app:layout_constraintBottom_toBottomOf="@id/horizontalGuidelineBottom4"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
