@@ -24,39 +24,5 @@ class ApiHelperImpl(private val apiService: ApiService): ApiHelper {
         }else{
             AppResult.Failure(AppError("001","Error found!!"))
         }
-
-
-//        apiService.getVideos().enqueue(object : Callback<VideosResponse> {
-//
-//            override fun onResponse(
-//                call: Call<VideosResponse>,
-//                response: Response<VideosResponse>
-//            ) {
-//                val arr = arrayListOf<VideoDescription>()
-//
-//                response.body()?.response?.videos?.values?.forEach {
-//                    arr.add(it)
-//                }
-//                result = arr
-//            }
-//
-//            override fun onFailure(call: Call<VideosResponse>, t: Throwable) {
-//
-//            }
-//        })
     }
-
 }
-
-
-//        var response: Call<VideosResponse>? = null
-//        var exception: Exception? = null
-//        try {
-//            response = apiService.getVideos()
-//
-//            response.awaitResponse()
-//        } catch (e: Exception) {
-//            exception = e
-//        }
-//
-//        return if(exception == null) AppResult.Success(response.)

@@ -6,9 +6,8 @@ data class VideosResponse(
 )
 
 data class VidResponse(
-    var videos: HashMap<String,VideoDescription>?
+    var videos: HashMap<String, VideoDescription>?
 )
-
 
 data class VideoDescription(
     var description: String?,

@@ -6,7 +6,13 @@ import com.example.videoplayer.common.helper.NetworkHelper
 import com.example.videoplayer.data.api.ApiHelper
 import com.example.videoplayer.data.api.ApiHelperImpl
 import com.example.videoplayer.data.api.ApiService
+import com.example.videoplayer.data.repository.VideoHistoryRepository
 import com.example.videoplayer.data.repository.VideoRepository
+import com.example.videoplayer.data.room.VideoHistoryDB
+import com.example.videoplayer.data.room.VideoHistoryDBImpl
+import com.example.videoplayer.data.room.VideoHistoryDao
+import com.example.videoplayer.data.room.VideoPlayerRoomDatabase
+import com.example.videoplayer.presentation.ui.dashboard.HistoryViewModel
 import com.example.videoplayer.presentation.ui.home.HomeViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,18 +24,29 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule = module {
     viewModel {
-        HomeViewModel(get(), get())
+        HomeViewModel(get(), get(), get())
+    }
+    viewModel {
+        HistoryViewModel(get())
     }
 
     single { VideoRepository(get()) }
+    single { VideoHistoryRepository(get()) }
     single { provideOkHttpClient() }
     single { provideRetrofit(get(), BuildConfig.BASE_URL) }
     single { provideApiService(get()) }
     single { provideNetworkHelper(androidContext()) }
 
+    single<VideoHistoryDB> {
+        return@single VideoHistoryDBImpl(get())
+    }
+
     single<ApiHelper> {
         return@single ApiHelperImpl(get())
     }
+
+    single { provideVideoHistoryDao(get()) }
+    single { provideDatabase() }
 }
 
 private fun provideNetworkHelper(context: Context) = NetworkHelper(context)
@@ -54,6 +71,14 @@ private fun provideRetrofit(
         .client(okHttpClient)
         .build()
 
-private fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+private fun provideApiService(retrofit: Retrofit): ApiService =
+    retrofit.create(ApiService::class.java)
 
 private fun provideApiHelper(apiHelper: ApiHelperImpl): ApiHelper = apiHelper
+
+fun provideVideoHistoryDao(database: VideoPlayerRoomDatabase): VideoHistoryDao {
+    return database.videoHistoryDao()
+}
+
+fun provideDatabase(): VideoPlayerRoomDatabase =
+    VideoPlayerRoomDatabase.getDatabase()

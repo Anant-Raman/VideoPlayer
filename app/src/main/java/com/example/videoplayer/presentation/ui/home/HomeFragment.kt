@@ -19,24 +19,15 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     lateinit var homeViewModel: HomeViewModel
 
-
-    private var list: List<VideoDescription> = emptyList()
-    private var player: ExoPlayer? = null
     private val videoAdapter: VideoAdapter by lazy {
-        VideoAdapter(onCategoryDeleteClick)
+        VideoAdapter(onVideoClick)
     }
-
-    private var playWhenReady = true
-    private var currentItem = 0
-    private var playbackPosition = 0L
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -54,38 +45,39 @@ class HomeFragment : Fragment() {
     public override fun onStart() {
         super.onStart()
         if (Util.SDK_INT > 23) {
-            if (list.isNotEmpty()) {
-                list[0].videoURL?.let { initializePlayer(it) }
+            if (homeViewModel.list.isNotEmpty()) {
+                homeViewModel.list[homeViewModel.mediaIndex].videoURL?.let { initializePlayer(it) }
             }
         }
     }
 
-    public override fun onResume() {
+    override fun onResume() {
         super.onResume()
-//        hideSystemUi()
-        if ((Util.SDK_INT <= 23 || player == null)) {
-            if (list.isNotEmpty()) {
-                list[0].videoURL?.let { initializePlayer(it) }
+        if ((Util.SDK_INT <= 23 || homeViewModel.player == null)) {
+            if (homeViewModel.list.isNotEmpty()) {
+                homeViewModel.list[homeViewModel.mediaIndex].videoURL?.let { initializePlayer(it) }
             }
         }
     }
 
-    public override fun onPause() {
+    override fun onPause() {
         super.onPause()
         if (Util.SDK_INT <= 23) {
             releasePlayer()
         }
     }
 
-    public override fun onStop() {
+    override fun onStop() {
         super.onStop()
         if (Util.SDK_INT > 23) {
             releasePlayer()
         }
     }
 
-    private val onCategoryDeleteClick = fun(videoUrl: String) {
-        reStartPlayer(videoUrl)
+    private val onVideoClick = fun(video: VideoDescription, position: Int) {
+        video.videoURL?.let { reStartPlayer(it) }
+        homeViewModel.saveVideoToHistory(video)
+        homeViewModel.mediaIndex = position
     }
 
     private fun reStartPlayer(url: String) {
@@ -95,7 +87,7 @@ class HomeFragment : Fragment() {
 
 
     private fun initializePlayer(videoUrl: String) {
-        player = ExoPlayer.Builder(requireContext())
+        homeViewModel.player = ExoPlayer.Builder(requireContext())
             .build()
             .also { exoPlayer ->
                 binding.playerView.player = exoPlayer
@@ -107,24 +99,21 @@ class HomeFragment : Fragment() {
     }
 
     private fun releasePlayer() {
-        player?.let { exoPlayer ->
-            playbackPosition = exoPlayer.currentPosition
-            currentItem = exoPlayer.currentMediaItemIndex
-            playWhenReady = exoPlayer.playWhenReady
+        homeViewModel.player?.let { exoPlayer ->
+            homeViewModel.playbackPosition = exoPlayer.currentPosition
+            homeViewModel.currentItem = exoPlayer.currentMediaItemIndex
+            homeViewModel.playWhenReady = exoPlayer.playWhenReady
             exoPlayer.release()
         }
-        player = null
+        homeViewModel.player = null
     }
 
-    private fun setupUI() {
-
-    }
 
     private fun setUpObserver() {
         homeViewModel.videoResult.observe(viewLifecycleOwner) {
-            list = it as List<VideoDescription>
+            homeViewModel.list = it as List<VideoDescription>
             videoAdapter.addList(it)
-            list[0].videoURL?.let { it1 -> initializePlayer(it1) }
+            homeViewModel.list[0].videoURL?.let { it1 -> initializePlayer(it1) }
         }
     }
 

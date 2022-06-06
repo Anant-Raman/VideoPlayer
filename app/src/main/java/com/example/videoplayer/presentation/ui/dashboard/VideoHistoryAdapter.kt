@@ -1,58 +1,51 @@
-package com.example.videoplayer.presentation.ui.home
+package com.example.videoplayer.presentation.ui.dashboard
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.videoplayer.data.model.VideoDescription
-import com.example.videoplayer.databinding.ItemVideoBinding
-import com.example.videoplayer.databinding.ItemVideoBinding.inflate
+import com.example.videoplayer.data.room.VideoHistory
+import com.example.videoplayer.databinding.ItemVideoHistoryBinding
 
-class VideoAdapter(
-    val onVideoClicked: (video: VideoDescription, position: Int) -> Unit,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class VideoHistoryAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var context: Context
     private var selectedPosition = RecyclerView.NO_POSITION
-    private val videoList: MutableList<VideoDescription?> = mutableListOf()
+    private val videoList: MutableList<VideoHistory?> = mutableListOf()
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         context = recyclerView.context
     }
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflate(layoutInflater, parent, false))
+        return ViewHolder(ItemVideoHistoryBinding.inflate(layoutInflater, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as VideoAdapter.ViewHolder).bind(videoList[position])
+        (holder as VideoHistoryAdapter.ViewHolder).bind(videoList[position])
 
         holder.itemView.isSelected = selectedPosition == position
     }
 
     override fun getItemCount(): Int = videoList.size
 
-    inner class ViewHolder(private val viewBinding: ItemVideoBinding) :
+    inner class ViewHolder(private val viewBinding: ItemVideoHistoryBinding) :
         RecyclerView.ViewHolder(viewBinding.root) {
-        fun bind(video: VideoDescription?) {
-            viewBinding.tvVideoName.text = video?.title
-            viewBinding.tvVideoDescription.text = video?.description
+        fun bind(video: VideoHistory?) {
+            viewBinding.tvVideoName.text = video?.videoDescription?.title
+            viewBinding.tvVideoDescription.text = video?.videoDescription?.description
+            "${video?.views.toString()} views".also { viewBinding.tvVideoView.text = it }
             Glide.with(context)
-                .load(video?.thumbnailURL)
+                .load(video?.videoDescription?.thumbnailURL)
                 .into(viewBinding.ivCategoryIcon)
-            viewBinding.rootView.setOnClickListener {
-                video?.let { it1 -> onVideoClicked(it1, layoutPosition) }
-                notifyItemChanged(selectedPosition)
-                selectedPosition = layoutPosition
-                notifyItemChanged(selectedPosition)
-            }
         }
     }
 
-    fun addList(list: List<VideoDescription?>) {
+    fun addList(list: List<VideoHistory?>) {
         if (list.isNotEmpty()) {
             val newIndex = videoList.size
             val newItemsCount = list.size

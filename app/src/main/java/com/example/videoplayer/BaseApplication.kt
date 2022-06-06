@@ -1,31 +1,26 @@
 package com.example.videoplayer
 
 import android.app.Application
+import android.content.Context
 import com.example.videoplayer.common.di.module.appModule
-import com.example.videoplayer.common.di.module.repositoryModule
-import com.example.videoplayer.common.di.module.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-
-class BaseApplication: Application() {
+class BaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
+        context = this
         startKoin {
 
             androidContext(this@BaseApplication)
-            modules(listOf(appModule, repositoryModule))
+            modules(listOf(appModule))
         }
     }
 
-    private fun initKoin() {
-        startKoin {
-            androidContext(this@BaseApplication)
-            modules(listOf(appModule, repositoryModule, viewModelModule))
-
-
-        }
+    companion object {
+        lateinit var context: Context
+        fun getApplicationContext() = context
     }
 }
